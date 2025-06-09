@@ -1,0 +1,28 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./docker/dockerFile
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    command: 'yarn dev'
+    develop:
+      watch:
+        - path: .
+          action: sync
+          target: /education-backend
+        - path: /package.json
+          action: rebuild
+    depends_on:
+      - db
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_PASSWORD=${DB_POSTGRES_PASSWORD}
+    ports:
+      - ${DB_POSTGRES_PORT}:${DB_POSTGRES_PORT}
+    volumes:
+      - education-data:/var/lib/postgresql/data
+
+volumes:
+  education-data:
