@@ -15,6 +15,7 @@ services:
           action: rebuild
     depends_on:
       - db
+      - redis
   db:
     image: postgres:17
     environment:
@@ -22,7 +23,16 @@ services:
     ports:
       - ${DB_POSTGRES_PORT}:${DB_POSTGRES_PORT}
     volumes:
-      - education-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
+  redis:
+    image: redis:8.0
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data      
 
 volumes:
-  education-data:
+  db-data:
+  redis-data:
