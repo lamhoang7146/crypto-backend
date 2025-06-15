@@ -1,11 +1,20 @@
 services:
-  backend:
+  api:
     build:
       context: .
       dockerfile: ./docker/dockerFile
     ports:
       - ${APP_PORT}:${APP_PORT}
-    command: 'yarn dev'
+    env_file:
+      - .env
+    command: >
+      sh -c 
+      "yarn db:migrate 
+      &&
+      yarn dev
+      &&
+      yarn db:studio
+       "
     develop:
       watch:
         - path: .
@@ -19,7 +28,9 @@ services:
   db:
     image: postgres:17
     environment:
+      - POSTGRES_USER=${DB_POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${DB_POSTGRES_PASSWORD}
+      - POSTGRES_DB=${DB_POSTGRES_DATABASE}
     ports:
       - ${DB_POSTGRES_PORT}:${DB_POSTGRES_PORT}
     volumes:
@@ -31,7 +42,7 @@ services:
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD}
     volumes:
-      - redis-data:/data      
+      - redis-data:/data
 
 volumes:
   db-data:
