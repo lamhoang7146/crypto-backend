@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { TodoService } from './todo.service';
-import { TodoResolver } from './todo.resolver';
+import { TodoService } from '@/modules/todo/todo.service';
+import { TodoResolver } from '@/modules/todo/todo.resolver';
+import { PrismaService } from '@/modules/prisma/prisma.service';
 
 @Module({
-  providers: [TodoResolver, TodoService],
+  providers: [TodoResolver, TodoService, PrismaService],
 })
-export class TodoModule {}
+export class TodoModule { }
