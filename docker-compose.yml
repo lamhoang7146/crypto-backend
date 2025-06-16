@@ -19,7 +19,7 @@ services:
       watch:
         - path: .
           action: sync
-          target: /education-backend
+          target: /app
         - path: /package.json
           action: rebuild
     depends_on:
