@@ -9,7 +9,6 @@ import { PrismaService } from './modules/prisma/prisma.service';
       isGlobal: true,
     }),
     GraphQlModule,
-    TodoModule,
   ],
   providers: [PrismaService],
 })
