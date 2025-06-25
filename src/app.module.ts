@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQlModule } from './modules/graphql/graphql.module';
-import { PrismaService } from './modules/prisma/prisma.service';
 import { UserModule } from './modules/users/user.module';
+import { PrismaModule } from './modules/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -10,8 +10,8 @@ import { UserModule } from './modules/users/user.module';
       isGlobal: true,
     }),
     GraphQlModule,
-    UserModule
+    UserModule,
+    PrismaModule
   ],
-  providers: [PrismaService],
 })
 export class AppModule { }

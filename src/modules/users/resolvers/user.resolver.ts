@@ -6,8 +6,8 @@ import { UserService } from "../services/user.service";
 export class UserResolver {
 	constructor(private userService: UserService) { }
 
-	@Query(() => [UserModal])
-	async read(): Promise<string> {
+	@Query(() => UserModal)
+	async read(){
 		return this.userService.get();
 	}
 
