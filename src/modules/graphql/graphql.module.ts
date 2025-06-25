@@ -9,6 +9,8 @@ import { join } from 'path';
 			driver: ApolloDriver,
 			autoSchemaFile: join(process.cwd(), 'src/modules/graphql/schema.gql'),
 			sortSchema: true,
+			playground: true,
+			introspection: true
 		}),
 	],
 })

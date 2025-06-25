@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQlModule } from './modules/graphql/graphql.module';
 import { PrismaService } from './modules/prisma/prisma.service';
+import { UserModule } from './modules/users/user.module';
 
 @Module({
   imports: [
@@ -9,6 +10,7 @@ import { PrismaService } from './modules/prisma/prisma.service';
       isGlobal: true,
     }),
     GraphQlModule,
+    UserModule
   ],
   providers: [PrismaService],
 })

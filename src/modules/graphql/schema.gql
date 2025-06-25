@@ -2,31 +2,30 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-input CreateTodoInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-type Mutation {
-  createTodo(createTodoInput: CreateTodoInput!): Todo!
-  removeTodo(id: Int!): Todo!
-  updateTodo(updateTodoInput: UpdateTodoInput!): Todo!
-}
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 type Query {
-  todo(id: Int!): Todo!
+  read: [User!]!
 }
 
-type Todo {
-  """Example field (placeholder)"""
-  id: Int!
-
-  """The title of the todo item"""
-  title: String!
+type RefreshToken {
+  createdAt: DateTime!
+  expiresAt: DateTime!
+  id: String!
+  token: String!
+  user: User!
+  userId: String!
 }
 
-input UpdateTodoInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+type User {
+  avatar: String
+  createdAt: DateTime!
+  email: String!
+  id: String!
+  name: String!
+  refreshTokens: [RefreshToken!]
+  updatedAt: DateTime!
 }
