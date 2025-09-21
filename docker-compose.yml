@@ -10,7 +10,9 @@ services:
     command: >
       sh -c 
       "
-      yarn db:generate 
+      yarn db:migrate
+      &&
+      yarn db:generate
       &&
       yarn dev
       &&
@@ -26,6 +28,7 @@ services:
     depends_on:
       - db
       - redis
+
   db:
     image: postgres:17
     environment:

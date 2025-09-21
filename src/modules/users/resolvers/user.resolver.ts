@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation } from "@nestjs/graphql";
+import { Resolver, Query, Mutation, } from "@nestjs/graphql";
 import { User as UserModal } from "../models/user.model";
 import { UserService } from "../services/user.service";
 
@@ -6,9 +6,9 @@ import { UserService } from "../services/user.service";
 export class UserResolver {
 	constructor(private userService: UserService) { }
 
-	@Query(() => UserModal)
-	async read(){
-		return this.userService.get();
+	@Mutation(() => UserModal)
+	async createUser() {
+		
 	}
 
 }

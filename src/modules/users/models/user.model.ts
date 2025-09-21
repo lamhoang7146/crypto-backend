@@ -1,5 +1,4 @@
 import { Field, ObjectType } from "@nestjs/graphql";
-import { RefreshToken } from "./refresh-token.model";
 
 @ObjectType()
 export class User {
@@ -17,8 +16,8 @@ export class User {
 
 	password: string;
 
-	@Field(() => [RefreshToken], { nullable: true })
-	refreshTokens?: RefreshToken[];
+	@Field({ nullable: true })
+	refreshTokens?: string;
 
 	@Field()
 	createdAt: Date;
