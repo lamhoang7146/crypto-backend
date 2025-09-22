@@ -12,8 +12,6 @@ services:
       "
       yarn db:migrate
       &&
-      yarn db:generate
-      &&
       yarn dev
       &&
       yarn db:studio
