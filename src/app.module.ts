@@ -11,7 +11,7 @@ import { PrismaModule } from './modules/prisma/prisma.module';
     }),
     GraphQlModule,
     UserModule,
-    PrismaModule
+    PrismaModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -8,15 +8,76 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
+  id           String    @id @default(uuid())
   avatar       String?
   name         String
-  email        String   @unique
-  password     String
-  refreshToken String?  @map("refresh_token")
-  createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt      @map("updated_at")
+  email        String    @unique
+  bio          String?
+  password     String?
+  refreshToken String?   @map("refresh_token")
+  posts        Post[]
+  comments     Comment[]
+  likes        Like[]
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
 
   @@map("user")
 }
 
+model Post {
+  id        String    @id @default(uuid())
+  title     String
+  content   String
+  slug      String    @unique
+  thumbnail String?
+  published Boolean   @default(false)
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  comments  Comment[]
+  tags      Tag[]     @relation("PostTags")
+  likes     Like[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@map("post")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([postId])
+  @@map("comment")
+}
+
+model Tag {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  posts     Post[]   @relation("PostTags")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tag")
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([postId])
+  @@map("like")
+}
