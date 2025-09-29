@@ -1,5 +1,17 @@
--- AlterTable
-ALTER TABLE "user" ADD COLUMN     "bio" TEXT;
+-- CreateTable
+CREATE TABLE "user" (
+    "id" TEXT NOT NULL,
+    "avatar" TEXT,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "bio" TEXT,
+    "password" TEXT,
+    "refresh_token" TEXT,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "user_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "post" (
@@ -56,6 +68,9 @@ CREATE TABLE "_PostTags" (
 
     CONSTRAINT "_PostTags_AB_pkey" PRIMARY KEY ("A","B")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "user_email_key" ON "user"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "post_slug_key" ON "post"("slug");
