@@ -1,3 +1,4 @@
+import { Post } from '@/modules/posts/entities/post.entity';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 @ObjectType()
@@ -5,17 +6,20 @@ export class User {
   @Field(() => ID)
   id: string;
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   avatar?: string;
 
-  @Field(() => String)
+  @Field()
   name: string;
 
-  @Field(() => String)
+  @Field()
   email: string;
 
-  @Field(() => String, { nullable: true })
-  refreshToken?: string;
+  @Field({ nullable: true })
+  bio?: string;
+
+  @Field(() => [Post])
+  posts?: Post[];
 
   @Field(() => Date)
   createdAt: Date;

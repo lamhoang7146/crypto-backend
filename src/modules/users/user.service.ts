@@ -6,10 +6,14 @@ import { User as PrismaUser } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
+
+  async findAll(): Promise<PrismaUser[]> {
+    return this.prisma.user.findMany();
+  }
 
   async createUser(createUserDto: CreateUserDto): Promise<PrismaUser> {
-    const user = await this.prismaService.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { email: createUserDto.email },
     });
 
@@ -17,7 +21,7 @@ export class UserService {
       throw new BadRequestException('Email already exists!');
     }
 
-    return this.prismaService.user.create({
+    return this.prisma.user.create({
       data: {
         ...createUserDto,
         password: await bcrypt.hash(createUserDto.password, 10),

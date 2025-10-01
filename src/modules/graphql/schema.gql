@@ -18,16 +18,28 @@ type Mutation {
   createUser(createUserDto: CreateUserDto!): User!
 }
 
+type Post {
+  content: String!
+  createdAt: DateTime!
+  id: String!
+  published: Boolean!
+  slug: String
+  thumbnail: String
+  title: String!
+  updatedAt: DateTime!
+}
+
 type Query {
-  health: String!
+  posts: Post!
+  users: User!
 }
 
 type User {
   avatar: String
+  bio: String
   createdAt: DateTime!
   email: String!
-  id: ID!
+  id: String!
   name: String!
-  refreshToken: String
   updatedAt: DateTime!
 }
