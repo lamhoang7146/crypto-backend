@@ -20,12 +20,14 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
+    "db:migrate:auto": "npx prisma migrate dev --name auto_migration",
     "db:studio": "npx prisma studio",
     "db:seed": "ts-node ./prisma/seeds/"
   },
   "dependencies": {
     "@apollo/server": "^4.12.2",
     "@apollo/subgraph": "^2.11.0",
+    "@as-integrations/express5": "^1.1.2",
     "@faker-js/faker": "^10.0.0",
     "@nestjs/apollo": "^13.1.0",
     "@nestjs/common": "^11.0.1",

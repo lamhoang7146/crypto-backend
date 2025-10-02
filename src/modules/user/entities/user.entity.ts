@@ -1,4 +1,6 @@
-import { Post } from '@/modules/posts/entities/post.entity';
+import { Comment } from '@/modules/comment/entities/comment.entity';
+import { Like } from '@/modules/like/entities/like.entity';
+import { Post } from '@/modules/post/entities/post.entity';
 import { Field, ObjectType, ID } from '@nestjs/graphql';
 
 @ObjectType()
@@ -19,7 +21,13 @@ export class User {
   bio?: string;
 
   @Field(() => [Post])
-  posts?: Post[];
+  posts: Post[];
+
+  @Field(() => [Comment])
+  comments: Comment[];
+
+  @Field(() => [Like])
+  likes: Like[];
 
   @Field(() => Date)
   createdAt: Date;

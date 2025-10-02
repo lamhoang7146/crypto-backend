@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid())
-  avatar       String?
-  name         String
-  email        String    @unique
-  bio          String?
-  password     String?
-  posts        Post[]
-  comments     Comment[]
-  likes        Like[]
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
+  id        String    @id @default(uuid())
+  avatar    String?
+  name      String
+  email     String    @unique
+  bio       String?
+  password  String?
+  posts     Post[]
+  comments  Comment[]
+  likes     Like[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@map("user")
 }
@@ -31,7 +31,7 @@ model Post {
   thumbnail String?
   published Boolean   @default(false)
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments  Comment[]
   tags      Tag[]     @relation("PostTags")
   likes     Like[]
@@ -39,6 +39,7 @@ model Post {
   updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@index([userId])
+  @@index([slug])
   @@map("post")
 }
 
@@ -46,9 +47,9 @@ model Comment {
   id        String   @id @default(uuid())
   content   String
   postId    String
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
@@ -70,9 +71,9 @@ model Tag {
 model Like {
   id        String   @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   postId    String
-  post      Post     @relation(fields: [postId], references: [id])
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
