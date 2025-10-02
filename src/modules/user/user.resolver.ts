@@ -1,8 +1,8 @@
-import { Resolver, Mutation, Args, Query } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { User } from '@/modules/user/entities/user.entity';
 import { UserService } from '@/modules/user/user.service';
-import { CreateUserDto } from '@/modules/user/dto/requests/create-user.dto';
 import { User as PrismaUser } from '@prisma/client';
+import { CreateUserDto } from './dto';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -17,6 +17,6 @@ export class UserResolver {
   async createUser(
     @Args('createUserDto') createUserDto: CreateUserDto,
   ): Promise<PrismaUser> {
-    return this.userService.createUser(createUserDto);
+    return await this.userService.createUser(createUserDto);
   }
 }

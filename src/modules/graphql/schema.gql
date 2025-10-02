@@ -13,6 +13,7 @@ type Comment {
 
 input CreateUserDto {
   avatar: String
+  bio: String
   email: String!
   name: String!
   password: String!
@@ -51,11 +52,11 @@ type Post {
 }
 
 type Query {
-  comments: Comment!
-  likes: Like!
-  posts: Post!
-  tags: Tag!
-  users: User!
+  comments: [Comment!]!
+  likes: [Like!]!
+  posts: [Post!]!
+  tags: [Tag!]!
+  users: [User!]!
 }
 
 type Tag {
