@@ -9,7 +9,7 @@ export class JwtPayload {
   name: string;
 
   @Field({ nullable: true })
-  avatar?: string | null;
+  avatar?: string;
 
   @Field()
   accessToken: string;
