@@ -3,11 +3,14 @@ import { User } from '@/modules/user/entities/user.entity';
 import { UserService } from '@/modules/user/user.service';
 import { User as PrismaUser } from '@prisma/client';
 import { CreateUserDto } from './dtos';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '@/modules/auth/guards/jwt-auth/jwt-auth.guard';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private userService: UserService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Query(() => [User], { name: 'users' })
   async findAll(): Promise<PrismaUser[]> {
     return await this.userService.findAll();
