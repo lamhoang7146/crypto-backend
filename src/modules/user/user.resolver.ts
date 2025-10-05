@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { User } from '@/modules/user/entities/user.entity';
 import { UserService } from '@/modules/user/user.service';
 import { User as PrismaUser } from '@prisma/client';
-import { CreateUserDto } from './dto';
+import { CreateUserDto } from './dtos';
 
 @Resolver(() => User)
 export class UserResolver {
