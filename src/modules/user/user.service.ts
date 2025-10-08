@@ -9,7 +9,13 @@ export class UserService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<PrismaUser[]> {
-    return await this.prisma.user.findMany();
+    return await this.prisma.user.findMany({
+      include: {
+        comments: true,
+        posts: true,
+        likes: true,
+      },
+    });
   }
 
   async createUser(createUserDto: CreateUserDto): Promise<PrismaUser> {
