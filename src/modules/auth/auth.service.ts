@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@/modules/prisma/prisma.service';
-import { SignInDto } from './dtos';
+import { SignInDto } from './dto';
 import { verify } from 'argon2';
 import { JwtService } from '@nestjs/jwt';
 import { JwtSubType } from './types';
@@ -13,16 +13,16 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(signInDto: SignInDto) {
+  async validateUser({ email, password }: SignInDto) {
     const user = await this.prisma.user.findUnique({
       where: {
-        email: signInDto.email,
+        email,
       },
     });
 
     if (!user) throw new UnauthorizedException('User not found!');
 
-    const passwordMatch = await verify(user.password!, signInDto.password);
+    const passwordMatch = await verify(user.password!, password);
 
     if (!passwordMatch) throw new UnauthorizedException('Invalid credentials!');
 

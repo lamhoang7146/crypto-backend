@@ -7,7 +7,7 @@ import { PostService } from './post.service';
 export class PostResolver {
   constructor(private postService: PostService) {}
 
-  @Query(() => [Post], { name: 'posts' })
+  @Query(() => [Post], { name: 'posts', description: 'Retrieve all posts' })
   async findAll(): Promise<PostPrisma[]> {
     return await this.postService.findAll();
   }

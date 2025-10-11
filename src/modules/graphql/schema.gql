@@ -40,7 +40,10 @@ type Like {
 }
 
 type Mutation {
+  """Create a new user"""
   createUser(createUserDto: CreateUserDto!): User!
+
+  """Sign in a user"""
   signIn(signInDto: SignInDto!): JwtPayload!
 }
 
@@ -62,8 +65,12 @@ type Post {
 type Query {
   comments: [Comment!]!
   likes: [Like!]!
+
+  """Retrieve all posts"""
   posts: [Post!]!
   tags: [Tag!]!
+
+  """Retrieve a list of all users"""
   users: [User!]!
 }
 
