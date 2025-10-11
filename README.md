@@ -67,25 +67,27 @@
 ## 🛠 Tech Stack
 
 ### Backend Framework
-- **[NestJS](https://nestjs.com/)** - Progressive Node.js framework
-- **[TypeScript](https://www.typescriptlang.org/)** - Type-safe JavaScript
-- **[GraphQL](https://graphql.org/)** - Query language for APIs
+- **[NestJS v11](https://nestjs.com/)** - Progressive Node.js framework
+- **[TypeScript v5.7](https://www.typescriptlang.org/)** - Type-safe JavaScript
+- **[GraphQL v16.11](https://graphql.org/)** with **[@apollo/server v4.12](https://www.apollographql.com/docs/apollo-server/)** - API query language
+- **[@nestjs/graphql v13.1](https://docs.nestjs.com/graphql/quick-start)** - NestJS GraphQL integration
 
 ### Database & ORM
-- **[PostgreSQL](https://www.postgresql.org/)** - Robust relational database
-- **[Prisma](https://www.prisma.io/)** - Next-generation ORM
-- **[Redis](https://redis.io/)** - In-memory data store
+- **[PostgreSQL v17](https://www.postgresql.org/)** - Robust relational database
+- **[Prisma v6.9](https://www.prisma.io/)** - Next-generation ORM
+- **[Redis v8.0](https://redis.io/)** - In-memory data store & caching
 
 ### Authentication & Security
-- **[Argon2](https://github.com/P-H-C/phc-winner-argon2)** - Password hashing
-- **[bcrypt](https://github.com/kelektiv/node.bcrypt.js)** - Additional security layer
-- **[JWT](https://jwt.io/)** - JSON Web Tokens
+- **[Argon2 v0.44](https://github.com/P-H-C/phc-winner-argon2)** - Modern password hashing
+- **[Passport v0.7](https://www.passportjs.org/)** - Authentication middleware
+- **[@nestjs/jwt v11](https://github.com/nestjs/jwt)** - JWT authentication
+- **[class-validator v0.14](https://github.com/typestack/class-validator)** - Input validation
 
 ### Development Tools
-- **[ESLint](https://eslint.org/)** - Code linting
-- **[Prettier](https://prettier.io/)** - Code formatting
-- **[Jest](https://jestjs.io/)** - Testing framework
-- **[Docker](https://www.docker.com/)** - Containerization
+- **[ESLint v9.18](https://eslint.org/)** - Code linting
+- **[Prettier v3.4](https://prettier.io/)** - Code formatting
+- **[Jest v29.7](https://jestjs.io/)** - Testing framework
+- **[Docker](https://www.docker.com/)** & **[Docker Compose](https://docs.docker.com/compose/)** - Containerization
 
 ---
 
@@ -93,11 +95,12 @@
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** (v18 or higher)
-- **Yarn** package manager
-- **PostgreSQL** (v13 or higher)
-- **Redis** (v6 or higher)
-- **Docker** & **Docker Compose** (optional)
+- **Node.js** (v20 or higher)
+- **Yarn** package manager (v1.22 or higher)
+- **PostgreSQL** (v17)
+- **Redis** (v8.0)
+- **Docker** (v24 or higher) & **Docker Compose** (v2.20 or higher)
+- **Git** (v2.40 or higher)
 
 ---
 
@@ -106,35 +109,52 @@ Before you begin, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/crypto-backend.git
+git clone https://github.com/hoang-nguyen-st/crypto-backend.git
 cd crypto-backend
 ```
 
 ### 2. Install Dependencies
 
 ```bash
+# Install all dependencies
 yarn install
+
+# Install global tools (if needed)
+npm install -g @nestjs/cli prisma
 ```
 
 ### 3. Environment Setup
 
 ```bash
+# Copy environment file
 cp .env.example .env
-# Edit .env with your configuration
+
+# Generate a secure JWT secret
+openssl rand -base64 32 > .jwt-secret
 ```
+
+Update `.env` with your configuration (see Environment Variables section below).
 
 ### 4. Database Setup
 
+#### Using Docker (Recommended)
 ```bash
-# Generate Prisma client
-yarn db:generate
+# Start PostgreSQL and Redis
+docker-compose up -d db redis
 
-# Run database migrations
-yarn db:migrate
+# Wait for services to be ready
+sleep 5
 
-# (Optional) Seed the database
-yarn db:seed
+# Setup database
+yarn db:generate     # Generate Prisma client
+yarn db:migrate      # Run database migrations
+yarn db:seed        # (Optional) Seed sample data
 ```
+
+#### Manual Setup
+If you prefer to use existing PostgreSQL and Redis instances:
+1. Update `.env` with your database and Redis credentials
+2. Run the database setup commands as above
 
 ### 5. Start Development Server
 
@@ -142,15 +162,30 @@ yarn db:seed
 # Development mode with hot reload
 yarn dev
 
-# Or start normally
-yarn start
+# Or using Docker (includes all dependencies)
+docker-compose up -d
 ```
 
 The API will be available at `http://localhost:6002`
 
 ### 6. Access GraphQL Playground
 
-Visit `http://localhost:6002/graphql` to explore the API interactively.
+- Development: Visit `http://localhost:6002/graphql`
+- Production: Visit `https://server.enderio.site/graphql`
+
+Both endpoints provide interactive GraphQL playgrounds where you can explore and test the API.
+
+### 7. API Health Check
+
+```bash
+# Check API status
+curl http://localhost:6002/health
+
+# Test GraphQL endpoint
+curl -X POST http://localhost:6002/graphql \
+  -H "Content-Type: application/json" \
+  -d '{"query": "{ __typename }"}'
+```
 
 ---
 
@@ -188,6 +223,11 @@ UPLOAD_PATH=./uploads
 
 ## 📚 API Documentation
 
+### GraphQL Endpoints
+
+- **Development**: `http://localhost:6002/graphql`
+- **Production**: `https://server.enderio.site/graphql`
+
 ### GraphQL Schema Overview
 
 Our API provides a comprehensive GraphQL schema with the following main types:
@@ -218,31 +258,58 @@ type Mutation {
 - **Tag**: Content categorization
 - **Like**: Social engagement
 
-### Example Queries
+### Example Operations
 
-#### Get All Users
+#### Authentication
 ```graphql
-query {
-  users {
+# Sign In
+mutation SignIn {
+  signIn(signInInput: {
+    email: "user@example.com"
+    password: "yourpassword"
+  }) {
+    token
+    user {
+      id
+      name
+      email
+    }
+  }
+}
+
+# Create User
+mutation CreateUser {
+  createUser(createUserDto: {
+    name: "John Doe"
+    email: "john@example.com"
+    password: "securepassword"
+    bio: "Crypto enthusiast"
+  }) {
     id
     name
     email
-    avatar
     bio
     createdAt
   }
 }
 ```
 
-#### Get Posts with Comments and Likes
+#### Content Operations
 ```graphql
-query {
-  posts {
+# Get All Posts with Filtering
+query GetPosts {
+  posts(
+    filter: { published: true }
+    orderBy: { createdAt: DESC }
+    take: 10
+    skip: 0
+  ) {
     id
     title
     content
     slug
     published
+    thumbnail
     user {
       name
       avatar
@@ -252,6 +319,7 @@ query {
       user {
         name
       }
+      createdAt
     }
     likes {
       user {
@@ -260,6 +328,93 @@ query {
     }
     tags {
       name
+    }
+    createdAt
+  }
+}
+
+# Create Post
+mutation CreatePost {
+  createPost(
+    input: {
+      title: "Understanding Blockchain"
+      content: "Detailed content about blockchain..."
+      slug: "understanding-blockchain"
+      published: true
+      tagIds: ["tag1", "tag2"]
+    }
+  ) {
+    id
+    title
+    slug
+    published
+    createdAt
+  }
+}
+
+# Add Comment
+mutation AddComment {
+  createComment(
+    input: {
+      content: "Great post!"
+      postId: "post-id"
+    }
+  ) {
+    id
+    content
+    createdAt
+    user {
+      name
+    }
+  }
+}
+```
+
+#### Social Interactions
+```graphql
+# Toggle Like
+mutation ToggleLike {
+  toggleLike(postId: "post-id") {
+    id
+    post {
+      id
+      likes {
+        id
+        user {
+          name
+        }
+      }
+    }
+  }
+}
+
+# Get User Profile with Activity
+query UserProfile {
+  user(id: "user-id") {
+    id
+    name
+    email
+    bio
+    avatar
+    posts {
+      id
+      title
+      likes {
+        id
+      }
+    }
+    comments {
+      id
+      content
+      post {
+        title
+      }
+    }
+    likes {
+      id
+      post {
+        title
+      }
     }
   }
 }
@@ -453,18 +608,99 @@ docker-compose down
 
 ### Services Included
 
-- **API Server**: NestJS application
-- **PostgreSQL**: Database server
-- **Redis**: Caching and session store
+- **API Server**: NestJS application (port 6002)
+- **PostgreSQL**: Database server (port 5432)
+- **Redis**: Caching and session store (port 6379)
+- **Prisma Studio**: Database management UI (port 5555)
+
+### Container Configuration
+
+```yaml
+services:
+  api:
+    build: 
+      context: .
+      dockerfile: ./docker/dockerFile
+    ports: 
+      - ${APP_PORT}:${APP_PORT}
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: ${DB_POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${DB_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${DB_POSTGRES_DATABASE}
+    ports:
+      - ${DB_POSTGRES_PORT}:${DB_POSTGRES_PORT}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:8.0
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+```
+
+### Docker Commands
+
+```bash
+# Build and start all services
+docker-compose up -d
+
+# View service logs
+docker-compose logs -f api    # API logs
+docker-compose logs -f db     # Database logs
+docker-compose logs -f redis  # Redis logs
+
+# Stop and remove containers
+docker-compose down
+
+# Rebuild specific service
+docker-compose up -d --build api
+
+# Clean up volumes
+docker-compose down -v
+```
 
 ### Environment Configuration
 
-The Docker setup uses environment variables from `.env` file. Make sure to configure:
+The Docker setup uses environment variables from `.env` file:
 
-- Database credentials
-- Redis settings
-- Application port
-- JWT secrets
+```env
+# Application
+APP_PORT=6002
+NODE_ENV=development
+
+# Database
+DATABASE_URL=postgresql://${DB_POSTGRES_USERNAME}:${DB_POSTGRES_PASSWORD}@db:5432/${DB_POSTGRES_DATABASE}
+DB_POSTGRES_USERNAME=postgres
+DB_POSTGRES_PASSWORD=your_secure_password
+DB_POSTGRES_DATABASE=crypto_db
+DB_POSTGRES_PORT=5432
+
+# Redis
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_PASSWORD=your_redis_password
+
+# JWT
+JWT_SECRET=your_secure_jwt_secret
+JWT_EXPIRES_IN=7d
+
+# File Upload
+MAX_FILE_SIZE=10485760  # 10MB
+UPLOAD_PATH=./uploads
+```
 
 ---
 
