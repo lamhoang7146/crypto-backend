@@ -10,6 +10,8 @@ services:
     command: >
       sh -c 
       "
+      yarn db:migrate
+      &&
       yarn db:generate
       &&
       yarn dev
