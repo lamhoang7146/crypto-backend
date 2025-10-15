@@ -13,6 +13,10 @@ import { GraphQLErrorResponse } from './interfaces';
       sortSchema: true,
       playground: true,
       introspection: true,
+      context: ({ req, res }: { req: Request; res: Response }) => ({
+        req,
+        res,
+      }),
       formatError: (error: GraphQLError) => {
         const originalError = error.extensions
           .originalError as GraphQLErrorResponse;

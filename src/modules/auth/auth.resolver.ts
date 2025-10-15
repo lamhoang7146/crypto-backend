@@ -1,15 +1,38 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Context, Query } from '@nestjs/graphql';
+import { Request, Response } from 'express';
+import { UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtPayload, SignInDto } from './dto';
+import { JwtPayload, SignInDto, UserModel } from './dto';
+import { CurrentUser } from '@/common/decorator/current-user.decorator';
+import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 
 @Resolver()
 export class AuthResolver {
-  constructor(private authService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Mutation(() => JwtPayload, { name: 'signIn', description: 'Sign in a user' })
-  async signIn(@Args('signInDto') signInDto: SignInDto) {
-    return await this.authService.signIn(
-      await this.authService.validateUser(signInDto),
-    );
+  async signIn(
+    @Args('signInDto') signInDto: SignInDto,
+    @Context() context: { req: Request; res: Response },
+  ) {
+    const user = await this.authService.validateUser(signInDto);
+    const { accessToken } = await this.authService.generateToken(user.id);
+
+    context.res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+      expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    });
+
+    return {
+      name: user.name,
+    };
+  }
+
+  @Query(() => UserModel, { name: 'me', description: 'Get current user info' })
+  @UseGuards(JwtAuthGuard)
+  async me(@CurrentUser() user: { id: string }) {
+    return await this.authService.getUserById(user.id);
   }
 }

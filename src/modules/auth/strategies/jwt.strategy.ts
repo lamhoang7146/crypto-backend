@@ -3,7 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtSubType } from '../types';
 import { AuthService } from '../auth.service';
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -12,13 +13,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private authService: AuthService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: Request) => req?.cookies?.access_token,
+      ]),
       secretOrKey: configService.get<string>('JWT_SECRET') || 'fallback-secret',
       ignoreExpiration: false,
     });
   }
 
   async validate(payload: JwtSubType) {
-    return await this.authService.validateJwtUser(payload.sub);
+    const user = await this.authService.validateJwtUser(payload.sub);
+    if (!user) throw new UnauthorizedException('Invalid token');
+    return user;
   }
 }
