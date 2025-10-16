@@ -42,6 +42,9 @@ type Mutation {
 
   """Sign in a user"""
   signIn(signInDto: SignInDto!): JwtPayload!
+
+  """Sign out a user"""
+  signOut: Boolean!
 }
 
 type Post {
@@ -105,4 +108,5 @@ type UserModel {
   email: String!
   id: String!
   name: String!
+  role: String!
 }

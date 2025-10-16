@@ -1,3 +1,4 @@
+import { Role } from '@/common';
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
@@ -13,4 +14,7 @@ export class UserModel {
 
   @Field({ nullable: true })
   avatar?: string;
+
+  @Field()
+  role: Role;
 }

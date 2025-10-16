@@ -3,8 +3,8 @@ import { Request, Response } from 'express';
 import { UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { JwtPayload, SignInDto, UserModel } from './dto';
-import { CurrentUser } from '@/common/decorator/current-user.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
+import { CurrentUser, CurrentUserResponse } from '@/common';
 
 @Resolver()
 export class AuthResolver {
@@ -32,7 +32,17 @@ export class AuthResolver {
 
   @Query(() => UserModel, { name: 'me', description: 'Get current user info' })
   @UseGuards(JwtAuthGuard)
-  async me(@CurrentUser() user: { id: string }) {
+  async me(@CurrentUser() user: CurrentUserResponse) {
     return await this.authService.getUserById(user.id);
+  }
+
+  @Mutation(() => Boolean, { name: 'signOut', description: 'Sign out a user' })
+  signOut(@Context() context: { req: Request; res: Response }) {
+    context.res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+    return true;
   }
 }
