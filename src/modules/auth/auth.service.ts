@@ -1,16 +1,19 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@/modules/prisma/prisma.service';
-import { SignInDto } from './dto';
+import { ForgotPasswordDto, SignInDto } from './dto';
 import { verify } from 'argon2';
-import { JwtService } from '@nestjs/jwt';
-import { JwtSubType } from './types';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { User } from '@prisma/client';
+import { EmailService } from '../email/email.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private emailService: EmailService,
+    private configService: ConfigService,
   ) {}
 
   async validateUser({ email, password }: SignInDto) {
@@ -29,13 +32,15 @@ export class AuthService {
     return user;
   }
 
-  async generateToken(userId: string) {
-    const payload: JwtSubType = { sub: userId };
-    const accessToken = await this.jwtService.signAsync(payload);
+  async generateToken(userId: string, expiresIn?: string | number) {
+    const expireTime =
+      expiresIn || this.configService.get<string>('JWT_EXPIRES_IN') || '1h';
 
-    return {
-      accessToken,
-    };
+    const accessToken = await this.jwtService.signAsync({ sub: userId }, {
+      expiresIn: expireTime,
+    } as unknown as JwtSignOptions);
+
+    return { accessToken };
   }
 
   async signIn(user: User) {
@@ -79,4 +84,28 @@ export class AuthService {
 
     return user;
   }
+
+  async forgotPassword({ email }: ForgotPasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    const { accessToken } = await this.generateToken(user.id, '5m');
+
+    const check = await this.emailService.sendForgotPasswordEmail(
+      email,
+      accessToken,
+    );
+
+    if (!check) throw new UnauthorizedException('Error sending email');
+
+    return 'Check your email for reset password link';
+  }
+
+  // async resetPassword(token: string, newPassword: string) {
+  //   // Token validation and password reset logic goes here
+  //   return true;
+  // }
 }

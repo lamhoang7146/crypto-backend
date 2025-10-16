@@ -5,6 +5,7 @@ import {
   IsEmail,
   MinLength,
   MaxLength,
+  IsOptional,
 } from 'class-validator';
 
 @InputType()
@@ -26,8 +27,10 @@ export class CreateUserDto {
   password: string;
 
   @Field(() => String, { name: 'avatar', nullable: true })
+  @IsOptional()
   avatar?: string;
 
   @Field(() => String, { name: 'bio', nullable: true })
+  @IsOptional()
   bio?: string;
 }

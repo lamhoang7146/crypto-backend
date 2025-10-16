@@ -7,10 +7,12 @@ import { CommentModule } from '@/modules/comment/comment.module';
 import { LikeModule } from '@/modules/like/like.module';
 import { AuthModule } from '@/modules/auth/auth.module';
 import { ConfigCustomModule } from '@/modules/config/config.module';
+import { EmailModule } from '@/modules/email/email.module';
 
 @Module({
   imports: [
     ConfigCustomModule,
+    EmailModule,
     GraphQlModule,
     UserModule,
     AuthModule,
