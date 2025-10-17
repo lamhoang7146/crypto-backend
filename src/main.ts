@@ -7,6 +7,8 @@ import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.int
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const configService = app.get(ConfigService);
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -22,10 +24,11 @@ async function bootstrap() {
       },
     }),
   );
-  const configService = app.get(ConfigService);
+
   const corsOptions: CorsOptions = {
     origin: [
-      'https://studio.apollographql.com',
+      configService.get<string>('EXPLORER_SANDBOX_GRAPHQL_ENDPOINT') ||
+        'https://studio.apollographql.com',
       configService.get<string>('FE_APP_URL') || 'http://localhost:5002',
     ],
     credentials: true,
@@ -33,6 +36,7 @@ async function bootstrap() {
 
   app.enableCors(corsOptions);
   app.use(cookieParser());
+
   const port = configService.get<number>('APP_PORT');
   await app.listen(port || 6002);
 }

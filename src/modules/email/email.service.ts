@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { forgotPassword } from './html';
 
 @Injectable()
 export class EmailService {
@@ -35,9 +36,11 @@ export class EmailService {
   ): Promise<boolean> {
     return await this.sendEmail(
       to,
-      'Password Reset',
+      'Password reset request',
       'Click the link to reset your password',
-      `<p>Click <a href="${this.configService.get<string>('FE_APP_URL')}/auth/reset-password?token=${accessToken}">here</a> to reset your password</p>`,
+      forgotPassword(
+        `${this.configService.get<string>('FE_APP_URL')}/auth/reset-password?token=${accessToken}`,
+      ),
     );
   }
 }

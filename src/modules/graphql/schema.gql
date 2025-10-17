@@ -47,11 +47,25 @@ type Mutation {
   """Forgot password"""
   forgotPassword(forgotPasswordDto: ForgotPasswordDto!): String!
 
+  """Reset password"""
+  resetPassword(newPasswordDto: NewPasswordDto!): String!
+
   """Sign in a user"""
   signIn(signInDto: SignInDto!): JwtPayload!
 
   """Sign out a user"""
   signOut: Boolean!
+}
+
+input NewPasswordDto {
+  """Confirm new password"""
+  confirmPassword: String!
+
+  """New password"""
+  password: String!
+
+  """Reset password token"""
+  token: String!
 }
 
 type Post {
@@ -85,6 +99,7 @@ type Query {
 }
 
 input SignInDto {
+  """Email"""
   email: String!
   password: String!
 }

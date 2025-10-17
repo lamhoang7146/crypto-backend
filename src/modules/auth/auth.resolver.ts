@@ -2,7 +2,13 @@ import { Args, Mutation, Resolver, Context, Query } from '@nestjs/graphql';
 import { Request, Response } from 'express';
 import { UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ForgotPasswordDto, JwtPayload, SignInDto, UserModel } from './dto';
+import {
+  ForgotPasswordDto,
+  JwtPayload,
+  NewPasswordDto,
+  SignInDto,
+  UserModel,
+} from './dto';
 import { JwtAuthGuard } from './guards/jwt-auth/jwt-auth.guard';
 import { CurrentUser, CurrentUserResponse } from '@/common';
 
@@ -56,14 +62,11 @@ export class AuthResolver {
     return await this.authService.forgotPassword(forgotPasswordDto);
   }
 
-  // @Mutation(() => Boolean, {
-  //   name: 'resetPassword',
-  //   description: 'Reset password',
-  // })
-  // async resetPassword(
-  //   @Args('token') token: string,
-  //   @Args('newPassword') newPassword: string,
-  // ) {
-  //   return this.authService.resetPassword(token, newPassword);
-  // }
+  @Mutation(() => String, {
+    name: 'resetPassword',
+    description: 'Reset password',
+  })
+  async resetPassword(@Args('newPasswordDto') newPasswordDto: NewPasswordDto) {
+    return await this.authService.resetPassword(newPasswordDto);
+  }
 }

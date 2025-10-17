@@ -1,11 +1,12 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { PrismaService } from '@/modules/prisma/prisma.service';
-import { ForgotPasswordDto, SignInDto } from './dto';
-import { verify } from 'argon2';
+import { verify, hash } from 'argon2';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { User } from '@prisma/client';
-import { EmailService } from '../email/email.service';
 import { ConfigService } from '@nestjs/config';
+import { User } from '@prisma/client';
+import { PrismaService } from '@/modules/prisma/prisma.service';
+import { ForgotPasswordDto, NewPasswordDto, SignInDto } from './dto';
+import { EmailService } from '@/modules/email/email.service';
+import { JwtSubType } from './types';
 
 @Injectable()
 export class AuthService {
@@ -104,8 +105,27 @@ export class AuthService {
     return 'Check your email for reset password link';
   }
 
-  // async resetPassword(token: string, newPassword: string) {
-  //   // Token validation and password reset logic goes here
-  //   return true;
-  // }
+  async resetPassword({ password, confirmPassword, token }: NewPasswordDto) {
+    if (password !== confirmPassword)
+      throw new UnauthorizedException('Password does not match');
+
+    const payload: JwtSubType = await this.jwtService.verifyAsync(token, {
+      ignoreExpiration: false,
+    });
+
+    if (!payload) throw new UnauthorizedException('Invalid token');
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: payload.sub },
+    });
+
+    if (!user) throw new UnauthorizedException('User not found');
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { password: await hash(password) },
+    });
+
+    return 'Reset password successfully';
+  }
 }
