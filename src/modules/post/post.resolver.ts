@@ -13,7 +13,7 @@ export class PostResolver {
   }
 
   @Query(() => String, { name: 'testDeploy', description: 'Testing deployment' })
-  async testDeploy() {
-    return await "Deploy successfully!";
+  testDeploy() {
+    return "Deploy successfully!";
   }
 }
