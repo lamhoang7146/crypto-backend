@@ -44,7 +44,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          port: 2223
+          port: 22
+          proxy_command: "cloudflared access ssh --hostname ${{ secrets.SSH_HOST }}"
           script: |
             cd ${{ secrets.PROJECT_DIR }}
             git fetch origin main
@@ -54,3 +55,4 @@ jobs:
             docker compose up -d --build
             docker image prune -f
             docker volume prune -f
+
