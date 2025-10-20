@@ -11,4 +11,9 @@ export class PostResolver {
   async findAll(): Promise<PostPrisma[]> {
     return await this.postService.findAll();
   }
+
+  @Query(() => String, { name: 'testing', description: 'Testing deploy' })
+  testing(): string {
+    return 'OK!';
+  }
 }
