@@ -9,9 +9,9 @@ services:
       - .env
     command: >
       sh -c "
-        pnpm db:generate &&
-        pnpm db:migrate &&
-        pnpm dev
+        corepack pnpm db:generate &&
+        corepack pnpm db:migrate &&
+        corepack pnpm dev
       "
     develop:
       watch:
