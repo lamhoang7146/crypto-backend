@@ -11,6 +11,14 @@ type Comment {
   user: User!
 }
 
+input CreatePostDto {
+  """Content of the post"""
+  content: String!
+
+  """Thumbnail of the post"""
+  thumbnail: String
+}
+
 input CreateUserDto {
   avatar: String
   bio: String
@@ -41,6 +49,9 @@ type Like {
 }
 
 type Mutation {
+  """Create post"""
+  createPost(input: CreatePostDto!): Boolean!
+
   """Create a new user"""
   createUser(createUserDto: CreateUserDto!): User!
 
@@ -75,10 +86,7 @@ type Post {
   id: ID!
   likes: [Like!]!
   published: Boolean!
-  slug: String!
-  tags: [Tag!]!
   thumbnail: String
-  title: String!
   updatedAt: DateTime!
   user: User!
 }
@@ -92,7 +100,6 @@ type Query {
 
   """Retrieve all posts"""
   posts: [Post!]!
-  tags: [Tag!]!
 
   """Retrieve a list of all users"""
   users: [User!]!
@@ -102,14 +109,6 @@ input SignInDto {
   """Email"""
   email: String!
   password: String!
-}
-
-type Tag {
-  createdAt: DateTime!
-  id: ID!
-  name: String!
-  posts: [Post!]!
-  updatedAt: DateTime!
 }
 
 type User {

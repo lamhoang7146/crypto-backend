@@ -1,8 +1,7 @@
+import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { Comment } from '@/modules/comment/entities/comment.entity';
 import { Like } from '@/modules/like/entities/like.entity';
-import { Tag } from '@/modules/tag/entities/tag.entity';
 import { User } from '@/modules/user/entities/user.entity';
-import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 @ObjectType()
 export class Post {
@@ -10,13 +9,7 @@ export class Post {
   id: string;
 
   @Field()
-  title: string;
-
-  @Field()
   content: string;
-
-  @Field()
-  slug: string;
 
   @Field({ nullable: true })
   thumbnail?: string;
@@ -26,9 +19,6 @@ export class Post {
 
   @Field(() => [Comment])
   comments: Comment[];
-
-  @Field(() => [Tag])
-  tags: Tag[];
 
   @Field(() => [Like])
   likes: Like[];

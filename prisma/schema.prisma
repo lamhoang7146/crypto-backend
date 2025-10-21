@@ -31,21 +31,17 @@ model User {
 
 model Post {
   id        String    @id @default(uuid())
-  title     String
   content   String
-  slug      String    @unique
   thumbnail String?
   published Boolean   @default(false)
   userId    String
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments  Comment[]
-  tags      Tag[]     @relation("PostTags")
   likes     Like[]
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
   @@index([userId])
-  @@index([slug])
   @@map("post")
 }
 
@@ -62,16 +58,6 @@ model Comment {
   @@index([userId])
   @@index([postId])
   @@map("comment")
-}
-
-model Tag {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  posts     Post[]   @relation("PostTags")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  @@map("tag")
 }
 
 model Like {
