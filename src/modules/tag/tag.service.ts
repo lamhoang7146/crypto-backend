@@ -7,6 +7,6 @@ export class TagService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<PrismaTag[]> {
-    return this.prisma.tag.findMany();
+    return await this.prisma.tag.findMany();
   }
 }

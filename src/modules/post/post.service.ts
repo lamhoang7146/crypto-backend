@@ -7,6 +7,6 @@ export class PostService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<PrismaPost[]> {
-    return this.prisma.post.findMany();
+    return await this.prisma.post.findMany();
   }
 }

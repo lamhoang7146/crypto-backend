@@ -7,6 +7,6 @@ export class LikeService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<PrismaLike[]> {
-    return this.prisma.like.findMany();
+    return await this.prisma.like.findMany();
   }
 }

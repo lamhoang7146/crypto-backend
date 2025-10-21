@@ -7,6 +7,6 @@ export class CommentService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(): Promise<PrismaComment[]> {
-    return this.prisma.comment.findMany();
+    return await this.prisma.comment.findMany();
   }
 }
