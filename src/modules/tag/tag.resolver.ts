@@ -11,4 +11,9 @@ export class TagResolver {
   async findAll(): Promise<PrismaTag[]> {
     return await this.tagService.findAll();
   }
+
+  @Query(() => String, { name: 'testing', description: 'testing' })
+  testing() {
+    return 'OK!';
+  }
 }
