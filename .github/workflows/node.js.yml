@@ -15,22 +15,27 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "yarn"
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Lint the application
-        run: yarn lint
+        run: pnpm lint
 
       - name: Build the application
-        run: yarn build
+        run: pnpm build
 
   deploy:
     name: Deploy
@@ -39,7 +44,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Install cloudflared
         run: |
@@ -52,7 +57,12 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-          echo -e "Host ssh.enderio.site\n\tUser ${{ secrets.SSH_USER }}\n\tIdentityFile ~/.ssh/id_ed25519\n\tProxyCommand cloudflared access ssh --hostname %h" > ~/.ssh/config
+          cat <<EOF > ~/.ssh/config
+          Host ssh.enderio.site
+            User ${{ secrets.SSH_USER }}
+            IdentityFile ~/.ssh/id_ed25519
+            ProxyCommand cloudflared access ssh --hostname %h
+          EOF
 
       - name: Deploy via SSH over Cloudflare Tunnel
         run: |

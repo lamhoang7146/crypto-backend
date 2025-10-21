@@ -8,14 +8,11 @@ services:
     env_file:
       - .env
     command: >
-      sh -c 
+      sh -c "
+        pnpm db:generate &&
+        pnpm db:migrate &&
+        pnpm dev
       "
-      yarn db:migrate
-      &&
-      yarn db:generate
-      &&
-      yarn dev
-       "
     develop:
       watch:
         - path: .
